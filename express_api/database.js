@@ -1,5 +1,5 @@
 // Load sqlite3
-const sqlite3 = require('sqlite').verbose();
+const sqlite3 = require('sqlite3').verbose();
 
 const database = new sqlite3.Database('database.sqlite', (err) => {
     if (err) {
@@ -14,6 +14,7 @@ const database = new sqlite3.Database('database.sqlite', (err) => {
                         time        TIME NOT NULL,
                         weather     VARCHAR(255) NOT NULL,
                         mood        ENUM('HAPPY', 'CALM', 'ANGRY', 'SAD') NOT NULL,
+                        temperature VARCHAR(255),
                         comment     LONGTEXT NOT NULL
                      )`,
                     (err) => {
@@ -25,4 +26,4 @@ const database = new sqlite3.Database('database.sqlite', (err) => {
                     });
     }
 });
-module.exports = db
+module.exports = database
