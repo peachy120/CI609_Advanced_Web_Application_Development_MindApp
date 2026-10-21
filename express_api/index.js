@@ -47,7 +47,7 @@ async function getMoods(req) {
         const mid = req.query.mid;
 
         if (mid && mid.length > 0 && mid.length <= 32 && mid.match(/^[a-z0-9]+$/i)) {
-            const sql = 'SELECT date, time, weather, mood FROM tMood WHERE userPin=?';
+            const sql = 'SELECT date, time, weather, mood FROM tMood WHERE mid=?';
             database.all(sql, [mid], (err, rows) => {
                 if (!err) {
                     if (rows.length > 0) {
@@ -57,7 +57,8 @@ async function getMoods(req) {
                             'date': date,
                             'time': time,
                             'weather': weather,
-                            'mood': mood
+                            'mood': mood,
+                            'comment': comment
                         };
                     } else {
                         status = 204;
@@ -80,20 +81,21 @@ async function postMoods(req) {
 
     try {
         const mid = req.body.mid;
-        const userPin = req.body.userPin;
         const date = req.body.date;
         const time = req.body.time;
         const weather = req.body.weather;
         const mood = req.body.mood;
+        const comment = req.body.comment;
 
-        if (mid && date && time && weather && mood && 
-            mid.length > 0 && mid.length <= 32 && mid.match(/^[a-z0-9]+$/i)) {
+        if (mid && date && time && weather && mood && comment &&
+            mid.length > 0 && mid.length <= 32 && mid.match(/^[a-z0-9]+$/i) &&
+            comment.length > 0) {
                 await new Promise ((resolve, reject) => {
-                    const sql = 'INSERT INTO tMood (mid, userPin, date, time, weather, mood) VALUES (?, ?, ?, ?, ?, ?)';
+                    const sql = 'INSERT INTO tMood (mid, date, time, weather, mood, comment) VALUES (?, ?, ?, ?, ?, ?)';
 
                     // find latestid
                     
-                    database.run(sql, [mid, userPin, date, time, weather, mood], function (err, result) {
+                    database.run(sql, [mid, date, time, weather, mood, comment], function (err, result) {
                         if (!err) {
                             status = 201;
                             data = {'mid': this.lastID};
